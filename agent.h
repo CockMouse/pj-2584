@@ -75,6 +75,10 @@ private:
  * player (dummy)
  * select an action randomly
  */
+bool compareFunc(std::pair<int, int> &a, std::pair<int, int> &b)
+{
+	return a.second > b.second;
+}
 class player : public agent {
 public:
 	player(const std::string& args = "") : agent("name=player " + args) {
@@ -84,10 +88,29 @@ public:
 
 	virtual action take_action(const board& before) {
 		int opcode[] = { 0, 1, 2, 3 };
-		std::shuffle(opcode, opcode + 4, engine);
-		for (int op : opcode) {
+		int sum[]    = { 0, 0, 0, 0 }; // Up Right Down Left 
+		//std::shuffle(opcode, opcode + 4, engine);
+		//std::cout << "OP CODE:" << opcode << '\n' ; 
+		
+		
+		board b = before;
+		b.get_score_dummy1(sum);
+		std::vector<std::pair<int, int> > vp;
+		for (int i=0; i < 4 ; ++i)
+			vp.push_back( std::make_pair( opcode[i], sum[i]) );
+		
+		std::sort(vp.begin(), vp.end(), compareFunc); 
+		
+		for (int i=0; i < 4 ; ++i) 
+			opcode[i] = vp[i].first ; 
+		
+		// Opcode Move 
+		for (int op : opcode){
 			board b = before;
-			if (b.move(op) != -1) return action::move(op);
+			if (b.move(op) != -1) {
+				//std::cout << "Valid OP:" << op << '\n' ; 
+				return action::move(op);
+			}
 		}
 		return action();
 	}

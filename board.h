@@ -46,6 +46,30 @@ public:
 	 * apply an action to the board
 	 * return the reward gained by the action, or -1 if the action is illegal
 	 */
+	int sum_row(int r){
+		int sum = 0 ;
+		for (int c = 0; c < 4; c++){
+			sum += fibo_seq[ tile[r][c] ] ;
+		}
+		return sum ;
+	}
+	int sum_col(int c){
+		int sum = 0 ;
+		for (int r = 0; r < 4; r++){
+			sum += fibo_seq[ tile[r][c] ] ;
+		}
+		return sum ;
+	} 
+	 
+	void get_score_dummy1(int* sum){
+		sum[0] = sum_row(0) + sum_row(1) ;
+		sum[1] = sum_col(2) + sum_col(3) ;
+		sum[2] = sum_row(2) + sum_row(3) ;
+		sum[3] = sum_col(0) + sum_col(1) ; 
+	}
+
+	
+	
 	int move(const int& opcode) {
 		switch (opcode) {
 		case 0: return move_up();
