@@ -8,7 +8,7 @@
 #include "board.h"
 #include "action.h"
 #include "agent.h"
-
+//unsigned int fibo_seq[18] = {0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 258 } ; 
 class statistic {
 public:
 	statistic(const size_t& total, const size_t& block = 0) : total(total), block(block ? block : total) {}
@@ -36,15 +36,16 @@ public:
 	 */
 	void show() const {
 		int block = std::min(data.size(), this->block);
-		size_t sum = 0, max = 0, opc = 0, stat[16] = { 0 };
+		size_t sum = 0, max = 0, opc = 0, stat[24] = { 0 };
 		uint64_t duration = 0;
 		auto it = data.end();
 		for (int i = 0; i < block; i++) {
 			auto& path = *(--it);
 			board game;
 			size_t score = 0;
-			for (const action& move : path)
+			for (const action& move : path){
 				score += move.apply(game);
+            }
 			sum += score;
 			max = std::max(score, max);
 			opc += (path.size() - 2) / 2;
@@ -58,13 +59,13 @@ public:
 		float coef = 100.0 / block;
 		float ops = opc * 1000.0 / duration;
 		std::cout << data.size() << "\t";
-		std::cout << "avg = " << unsigned(avg) << ", ";
-		std::cout << "max = " << unsigned(max) << ", ";
-		std::cout << "ops = " << unsigned(ops) << std::endl;
-		for (int t = 0, c = 0; c < block; c += stat[t++]) {
+		std::cout << "avg = " << int(avg) << ", ";
+		std::cout << "max = " << int(max) << ", ";
+		std::cout << "ops = " << int(ops) << std::endl;
+		for (int t = 0, c = 0; c < block; c += stat[t++]) { 
 			if (stat[t] == 0) continue;
-			int accu = std::accumulate(stat + t, stat + 16, 0);
-			std::cout << "\t" << ((1 << t) & -2u) << "\t" << (accu * coef) << "%";
+			int accu = std::accumulate(stat + t, stat + 24, 0);
+			std::cout << "\t" << fibo_seq[ t ] << "\t" << (accu * coef) << "%";
 			std::cout << "\t(" << (stat[t] * coef) << "%)" << std::endl;
 		}
 		std::cout << std::endl;

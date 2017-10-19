@@ -19,6 +19,8 @@
  * (12) (13) (14) (15)
  *
  */
+
+unsigned int fibo_seq[24] = {0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657};
 class board {
 
 public:
@@ -30,7 +32,7 @@ public:
 	const std::array<int, 4>& operator [](const int& i) const { return tile[i]; }
 	int& operator ()(const int& i) { return tile[i / 4][i % 4]; }
 	const int& operator ()(const int& i) const { return tile[i / 4][i % 4]; }
-
+    
 public:
 	bool operator ==(const board& b) const { return tile == b.tile; }
 	bool operator < (const board& b) const { return tile <  b.tile; }
@@ -53,7 +55,7 @@ public:
 		default: return -1;
 		}
 	}
-
+    // return score 
 	int move_left() {
 		board prev = *this;
 		int score = 0;
@@ -65,13 +67,19 @@ public:
 				if (tile == 0) continue;
 				row[c] = 0;
 				if (hold) {
-					if (tile == hold) {
+					if ( ( tile==1 && hold==1 ) ) {
 						row[top++] = ++tile;
-						score += (1 << tile);
+						score += fibo_seq[tile];
 						hold = 0;
-					} else {
+                    } 
+                    else if (( tile>=1 && hold>=1 && abs(tile-hold)==1 ) ){
+                        row[top++] = std::max(tile, hold)+1;
+						score += fibo_seq[ std::max(tile, hold)+1 ];
+						hold = 0;
+                    }
+					else { 
 						row[top++] = hold;
-						hold = tile;
+						hold       = tile;
 					}
 				} else {
 					hold = tile;
@@ -79,12 +87,14 @@ public:
 			}
 			if (hold) tile[r][top] = hold;
 		}
+         
 		return (*this != prev) ? score : -1;
 	}
 	int move_right() {
 		reflect_horizontal();
 		int score = move_left();
 		reflect_horizontal();
+		return score;
 		return score;
 	}
 	int move_up() {
@@ -145,10 +155,10 @@ public:
 		out << "+------------------------+" << std::endl;
 		for (int r = 0; r < 4; r++) {
 			std::snprintf(buff, sizeof(buff), "|%6u%6u%6u%6u|",
-				(1 << b[r][0]) & -2u, // use -2u (0xff...fe) to remove the unnecessary 1 for (1 << 0)
-				(1 << b[r][1]) & -2u,
-				(1 << b[r][2]) & -2u,
-				(1 << b[r][3]) & -2u);
+				fibo_seq[ b[r][0] ]  , // use -2u (0xff...fe) to remove the unnecessary 1 for (1 << 0)
+				fibo_seq[ b[r][1] ]  ,
+				fibo_seq[ b[r][2] ]  ,
+				fibo_seq[ b[r][3] ] );
 			out << buff << std::endl;
 		}
 		out << "+------------------------+" << std::endl;
@@ -156,5 +166,5 @@ public:
 	}
 
 private:
-    std::array<std::array<int, 4>, 4> tile;
+    std::array<std::array<int, 4>, 4> tile;   
 };

@@ -22,7 +22,7 @@
 #include "statistic.h"
 
 int main(int argc, const char* argv[]) {
-	std::cout << "2048-Demo: ";
+	std::cout << "2584-Demo: ";
 	std::copy(argv, argv + argc, std::ostream_iterator<const char*>(std::cout, " "));
 	std::cout << std::endl << std::endl;
 
@@ -67,9 +67,9 @@ int main(int argc, const char* argv[]) {
 		evil.open_episode(play.name() + ":~");
 
 		stat.open_episode(play.name() + ":" + evil.name());
-		board game = stat.make_empty_board();
+		board game = stat.make_empty_board(); 
 		while (true) {
-			agent& who = stat.take_turns(play, evil);
+			agent& who = stat.take_turns(play, evil); 
 			action move = who.take_action(game);
 			if (move.apply(game) == -1) break;
 			stat.save_action(move);
